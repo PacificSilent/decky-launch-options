@@ -74,10 +74,6 @@ function AppCard({ app, command, t }: { app: AppEntry; command: string; t: Strin
       const next = adding ? addCommand(current, command) : removeCommand(current, command);
       setLaunchOptions(app, next);
       setOptions(next);
-      toaster.toast({
-        title: app.name,
-        body: adding ? t.toastAdded(normalize(command)) : t.toastRemoved,
-      });
     } catch (e) {
       console.error("[launch-options] failed to update", app.appId, e);
       toaster.toast({ title: app.name, body: t.toastError });

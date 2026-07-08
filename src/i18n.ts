@@ -16,8 +16,6 @@ export interface Strings {
   noApps: string;
   cardAdd: string;
   cardRemove: string;
-  toastAdded: (cmd: string) => string;
-  toastRemoved: string;
   toastError: string;
   steamApp: string;
   nonSteamApp: string;
@@ -41,8 +39,6 @@ const en: Strings = {
   noApps: "No installed applications found.",
   cardAdd: "Add command",
   cardRemove: "Remove command",
-  toastAdded: (cmd) => `Added: ${cmd}`,
-  toastRemoved: "Command removed",
   toastError: "Failed to update launch options",
   steamApp: "Steam",
   nonSteamApp: "Non-Steam",
@@ -66,8 +62,6 @@ const es: Strings = {
   noApps: "No se encontraron aplicaciones instaladas.",
   cardAdd: "Añadir comando",
   cardRemove: "Quitar comando",
-  toastAdded: (cmd) => `Añadido: ${cmd}`,
-  toastRemoved: "Comando eliminado",
   toastError: "Error al actualizar las opciones",
   steamApp: "Steam",
   nonSteamApp: "Non-Steam",
