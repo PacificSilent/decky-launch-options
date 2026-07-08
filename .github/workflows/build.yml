@@ -34,17 +34,19 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Package plugin zip
+      - name: Package plugin
         run: |
-          mkdir -p out/decky-launch-options/dist
-          cp plugin.json package.json main.py README.md LICENSE out/decky-launch-options/
-          cp dist/index.js out/decky-launch-options/dist/
-          cd out && zip -r decky-launch-options.zip decky-launch-options
+          mkdir -p out/pkg/decky-launch-options/dist
+          cp plugin.json package.json main.py README.md LICENSE out/pkg/decky-launch-options/
+          cp dist/index.js out/pkg/decky-launch-options/dist/
+          cd out/pkg && zip -r ../decky-launch-options.zip decky-launch-options
 
+      # The plugin folder is uploaded unzipped: GitHub wraps artifact downloads
+      # in a zip, so the downloaded file is itself the installable plugin zip.
       - uses: actions/upload-artifact@v4
         with:
           name: decky-launch-options
-          path: out/decky-launch-options.zip
+          path: out/pkg
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
