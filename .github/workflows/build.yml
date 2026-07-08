@@ -48,8 +48,15 @@ jobs:
           name: decky-launch-options
           path: out/pkg
 
+      - name: Read package version
+        id: pkg
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # Pushes to main release automatically under v<package.json version>;
+      # pushing a v* tag still works and releases under that tag.
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', steps.pkg.outputs.version) }}
           files: out/decky-launch-options.zip
