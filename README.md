@@ -1,9 +1,23 @@
 # Decky Launch Options Injector
 
+[![Release](https://img.shields.io/github/v/release/PacificSilent/decky-launch-options)](https://github.com/PacificSilent/decky-launch-options/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Build](https://github.com/PacificSilent/decky-launch-options/actions/workflows/build.yml/badge.svg)](https://github.com/PacificSilent/decky-launch-options/actions)
+
 Plugin de [Decky Loader](https://decky.xyz/) para Steam Deck que permite inyectar un comando
 (por defecto `~/lsfg %command%`, el wrapper de [decky-lsfg-vk](https://github.com/xXJSONDeruloXx/decky-lsfg-vk))
 en las **Configuraciones de Lanzamiento** de cualquier juego, tanto de Steam como non-Steam,
 sin pisar lo que el usuario ya tenía configurado.
+
+## Capturas
+
+| Panel en el Quick Access Menu | Selector de juegos |
+| --- | --- |
+| ![Panel del plugin en el menú de acceso rápido](docs/qam-panel.png) | ![Modal selector con cards de los juegos instalados](docs/game-picker.png) |
+
+El comando queda inyectado en las propiedades del juego, como si lo hubieras escrito a mano:
+
+![Opciones de lanzamiento resultantes en las propiedades del juego](docs/launch-options-result.png)
 
 ## Características
 
@@ -28,10 +42,17 @@ sin pisar lo que el usuario ya tenía configurado.
 
 ## Instalación
 
-### Desde un zip (Release / artifact de CI)
+### Desde el Release (recomendado)
 
-1. Descarga `decky-launch-options.zip` desde Releases o desde el artifact del workflow de GitHub Actions.
-2. En Decky Loader: engranaje → activa *Developer mode* → pestaña *Developer* → *Install plugin from zip*.
+1. En Decky Loader: engranaje ⚙️ → activa *Developer mode*.
+2. En la pestaña *Developer* → *Install plugin from URL* pega:
+
+   ```
+   https://github.com/PacificSilent/decky-launch-options/releases/latest/download/decky-launch-options.zip
+   ```
+
+   O descarga [`decky-launch-options.zip`](https://github.com/PacificSilent/decky-launch-options/releases/latest)
+   manualmente e instálalo con *Install plugin from zip*.
 
 ### Compilar a mano
 
@@ -53,6 +74,14 @@ añade como argumentos del juego. El plugin respeta esa semántica al combinar c
 `SteamClient.Apps.RegisterForAppDetails` para leer las opciones actuales y
 `SetAppLaunchOptions` / `SetShortcutLaunchOptions` para escribirlas.
 
+## Créditos
+
+El desarrollo de este plugin fue **asistido por IA** ([Claude Code](https://claude.com/claude-code)
+de Anthropic), con dirección, pruebas en hardware real y feedback de
+[PacificSilent](https://github.com/PacificSilent).
+
 ## Licencia
 
-MIT
+Este proyecto se distribuye bajo la licencia [MIT](LICENSE): puedes usarlo, modificarlo y
+redistribuirlo libremente (incluso con fines comerciales) siempre que conserves el aviso de
+copyright. Las contribuciones vía issues y pull requests son bienvenidas.
