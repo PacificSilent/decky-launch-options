@@ -1,0 +1,11 @@
+{
+  "name": "Launch Options Injector",
+  "author": "PacificSilent",
+  "flags": [],
+  "api_version": 1,
+  "publish": {
+    "tags": ["utility", "launch-options", "lsfg"],
+    "description": "Inject a custom command (like ~/lsfg %command%) into the launch options of any Steam or non-Steam app, preserving whatever the user already had configured.",
+    "image": "https://opengraph.githubassets.com/1/PacificSilent/decky-launch-options"
+  }
+}
