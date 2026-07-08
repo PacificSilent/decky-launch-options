@@ -8,14 +8,12 @@ export interface Strings {
   appsSection: string;
   openPicker: string;
   settingsSection: string;
-  languageToggle: string;
-  languageDescription: string;
+  languageLabel: string;
   pickerTitle: string;
   pickerHint: string;
   searchPlaceholder: string;
   loading: string;
   noApps: string;
-  moreResults: (n: number) => string;
   cardAdd: string;
   cardRemove: string;
   toastAdded: (cmd: string) => string;
@@ -35,14 +33,12 @@ const en: Strings = {
   appsSection: "Applications",
   openPicker: "Select games...",
   settingsSection: "Settings",
-  languageToggle: "Español",
-  languageDescription: "Switch the plugin language to Spanish",
+  languageLabel: "Language",
   pickerTitle: "Select games",
   pickerHint: "Press A on a card to add or remove the command",
   searchPlaceholder: "Search...",
   loading: "Loading...",
-  noApps: "No applications found.",
-  moreResults: (n) => `${n} more — refine your search`,
+  noApps: "No installed applications found.",
   cardAdd: "Add command",
   cardRemove: "Remove command",
   toastAdded: (cmd) => `Added: ${cmd}`,
@@ -62,14 +58,12 @@ const es: Strings = {
   appsSection: "Aplicaciones",
   openPicker: "Seleccionar juegos...",
   settingsSection: "Ajustes",
-  languageToggle: "Español",
-  languageDescription: "Cambiar el idioma del plugin a español",
+  languageLabel: "Idioma",
   pickerTitle: "Seleccionar juegos",
   pickerHint: "Pulsa A sobre una card para añadir o quitar el comando",
   searchPlaceholder: "Buscar...",
   loading: "Cargando...",
-  noApps: "No se encontraron aplicaciones.",
-  moreResults: (n) => `${n} más — usa el buscador`,
+  noApps: "No se encontraron aplicaciones instaladas.",
   cardAdd: "Añadir comando",
   cardRemove: "Quitar comando",
   toastAdded: (cmd) => `Añadido: ${cmd}`,

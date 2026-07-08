@@ -1,11 +1,12 @@
 import {
   ButtonItem,
+  DialogButton,
+  DropdownItem,
   Focusable,
   ModalRoot,
   PanelSection,
   PanelSectionRow,
   TextField,
-  ToggleField,
   showModal,
   staticClasses,
 } from "@decky/ui";
@@ -25,7 +26,6 @@ import { Lang, Strings, TRANSLATIONS, loadLang, saveLang } from "./i18n";
 
 const STORAGE_KEY = "decky-launch-options:command";
 const DEFAULT_COMMAND = "~/lsfg %command%";
-const MAX_VISIBLE_CARDS = 30;
 
 function loadSavedCommand(): string {
   try {
@@ -90,7 +90,11 @@ function AppCard({ app, command, t }: { app: AppEntry; command: string; t: Strin
     <Focusable
       onActivate={toggle}
       onOKActionDescription={enabled ? t.cardRemove : t.cardAdd}
-      onFocus={() => setFocused(true)}
+      onFocus={(e: any) => {
+        setFocused(true);
+        // Keep the focused card visible while scrolling the grid with the stick/dpad.
+        e?.currentTarget?.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
+      }}
       onBlur={() => setFocused(false)}
       style={{
         display: "flex",
@@ -212,11 +216,16 @@ function AppPickerModal({
     return apps.filter((app) => app.name.toLowerCase().includes(needle));
   }, [apps, search]);
 
-  const visible = filtered.slice(0, MAX_VISIBLE_CARDS);
-  const hidden = filtered.length - visible.length;
-
   return (
     <ModalRoot closeModal={closeModal}>
+      {/* Steam caps the generic dialog width; widen it while this modal is
+          mounted so the card grid can use most of the screen. */}
+      <style>{`
+        div[class*="GenericConfirmDialog"] {
+          width: 94vw !important;
+          max-width: 94vw !important;
+        }
+      `}</style>
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <div className={staticClasses.Title} style={{ padding: 0 }}>
           {t.pickerTitle}
@@ -229,26 +238,27 @@ function AppPickerModal({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        {apps.length === 0 && <div style={{ opacity: 0.7 }}>{t.noApps}</div>}
+        {filtered.length === 0 && <div style={{ opacity: 0.7 }}>{t.noApps}</div>}
         <Focusable
+          flow-children="grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(105px, 1fr))",
-            gap: "8px",
-            maxHeight: "52vh",
+            gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+            gap: "10px",
+            maxHeight: "58vh",
             overflowY: "auto",
             padding: "4px",
           }}
         >
-          {visible.map((app) => (
+          {filtered.map((app) => (
             <AppCard key={app.appId} app={app} command={command} t={t} />
           ))}
         </Focusable>
-        {hidden > 0 && (
-          <div style={{ fontSize: "12px", opacity: 0.7, textAlign: "center" }}>
-            {t.moreResults(hidden)}
-          </div>
-        )}
+        <Focusable style={{ display: "flex", justifyContent: "flex-end", paddingTop: "4px" }}>
+          <DialogButton style={{ width: "200px" }} onClick={() => closeModal?.()}>
+            {t.close}
+          </DialogButton>
+        </Focusable>
       </div>
     </ModalRoot>
   );
@@ -299,12 +309,15 @@ function Content() {
 
       <PanelSection title={t.settingsSection}>
         <PanelSectionRow>
-          <ToggleField
-            label={t.languageToggle}
-            description={t.languageDescription}
-            checked={lang === "es"}
-            onChange={(value) => {
-              const next: Lang = value ? "es" : "en";
+          <DropdownItem
+            label={t.languageLabel}
+            rgOptions={[
+              { data: "en", label: "English" },
+              { data: "es", label: "Español" },
+            ]}
+            selectedOption={lang}
+            onChange={(option) => {
+              const next = option.data as Lang;
               setLang(next);
               saveLang(next);
             }}

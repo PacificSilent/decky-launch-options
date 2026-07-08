@@ -28,9 +28,9 @@ function isShortcutOverview(app: any): boolean {
 }
 
 /**
- * All apps the command can be injected into: Steam games plus non-Steam
- * shortcuts. Collected defensively from several collections because their
- * availability differs between SteamOS versions.
+ * Apps the command can be injected into: games INSTALLED on the device plus
+ * non-Steam shortcuts. Collected defensively from several collections
+ * because their availability differs between SteamOS versions.
  */
 export function getAllApps(): AppEntry[] {
   const seen = new Map<number, AppEntry>();
@@ -39,6 +39,7 @@ export function getAllApps(): AppEntry[] {
     if (!app || typeof app.appid !== "number" || seen.has(app.appid)) return;
     const isShortcut = isShortcutOverview(app);
     if (!isShortcut && app.app_type !== APP_TYPE_GAME) return;
+    if (!isShortcut && app.installed === false) return;
     const name = app.display_name ?? `App ${app.appid}`;
     seen.set(app.appid, {
       appId: app.appid,
@@ -49,9 +50,8 @@ export function getAllApps(): AppEntry[] {
   };
 
   const collections = [
-    collectionStore?.allGamesCollection,
-    collectionStore?.deckDesktopApps,
     collectionStore?.localGamesCollection,
+    collectionStore?.deckDesktopApps,
   ];
   for (const collection of collections) {
     try {
@@ -91,10 +91,44 @@ function extractLaunchOptions(details: any): string {
 }
 
 /**
+ * Limits how many RegisterForAppDetails requests run at once, so a modal
+ * that mounts the whole library doesn't flood the Steam client.
+ */
+class Semaphore {
+  private waiting: (() => void)[] = [];
+  constructor(private slots: number) {}
+
+  async acquire(): Promise<void> {
+    if (this.slots > 0) {
+      this.slots--;
+      return;
+    }
+    await new Promise<void>((resolve) => this.waiting.push(resolve));
+  }
+
+  release(): void {
+    const next = this.waiting.shift();
+    if (next) next();
+    else this.slots++;
+  }
+}
+
+const detailsSemaphore = new Semaphore(4);
+
+/**
  * Reads the current launch options of an app. Uses RegisterForAppDetails so
  * Steam actually fetches fresh data, with a cached-store fallback on timeout.
  */
-export function getLaunchOptions(appId: number): Promise<string> {
+export async function getLaunchOptions(appId: number): Promise<string> {
+  await detailsSemaphore.acquire();
+  try {
+    return await fetchLaunchOptions(appId);
+  } finally {
+    detailsSemaphore.release();
+  }
+}
+
+function fetchLaunchOptions(appId: number): Promise<string> {
   return new Promise((resolve) => {
     let settled = false;
     const finish = (value: string) => {
@@ -124,7 +158,7 @@ export function getLaunchOptions(appId: number): Promise<string> {
         // ignore
       }
       finish(extractLaunchOptions(appDetailsStore?.GetAppDetails?.(appId)));
-    }, 4000);
+    }, 2000);
   });
 }
 
