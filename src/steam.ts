@@ -6,6 +6,7 @@
 declare const SteamClient: any;
 declare const collectionStore: any;
 declare const appDetailsStore: any;
+declare const appStore: any;
 
 const APP_TYPE_GAME = 1;
 const APP_TYPE_SHORTCUT = 1073741824;
@@ -61,6 +62,28 @@ export function getAllApps(): AppEntry[] {
   }
 
   return [...seen.values()].sort((a, b) => a.sortAs.localeCompare(b.sortAs));
+}
+
+/**
+ * Best-effort vertical capsule / grid artwork for an app, honoring custom
+ * artwork the user set (works for non-Steam shortcuts too). Returns
+ * undefined when nothing is available; callers should render a fallback.
+ */
+export function getAppImageUrl(appId: number): string | undefined {
+  try {
+    const overview = appStore?.GetAppOverviewByAppID?.(appId);
+    if (!overview) return undefined;
+    const custom = appStore.GetCustomVerticalCapsuleURLs?.(overview);
+    if (Array.isArray(custom) && custom.length > 0) return custom[custom.length - 1];
+    return (
+      appStore.GetVerticalCapsuleURLForApp?.(overview) ??
+      appStore.GetLandscapeImageURLForApp?.(overview) ??
+      appStore.GetIconURLForApp?.(overview)
+    );
+  } catch (e) {
+    console.error("[launch-options] failed to resolve artwork for", appId, e);
+    return undefined;
+  }
 }
 
 function extractLaunchOptions(details: any): string {

@@ -54,6 +54,19 @@ test("round trip add+remove returns the original", () => {
   }
 });
 
+test("remove cleans the %command% orphaned by a partial command text", () => {
+  // e.g. the user injected "~/lsfg %command%" but later shortened the
+  // command field to "~/lsfg": removal must not leave "%command%" behind.
+  assert.equal(removeCommand("~/lsfg %command%", "~/lsfg"), "");
+});
+
+test("remove of partial command keeps outer wrapper intact", () => {
+  assert.equal(
+    removeCommand("MANGOHUD=1 ~/lsfg %command%", "~/lsfg"),
+    "MANGOHUD=1 %command%"
+  );
+});
+
 test("hasCommand detects normalized matches", () => {
   assert.ok(hasCommand("FOO=1   ~/lsfg   %command%", LSFG));
   assert.ok(!hasCommand("FOO=1 %command%", LSFG));

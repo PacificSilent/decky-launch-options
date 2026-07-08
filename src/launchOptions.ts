@@ -64,16 +64,15 @@ export function removeCommand(existing: string, command: string): string {
   let cur = normalize(existing);
   if (!cmd || !cur.includes(cmd)) return cur;
 
-  if (cmd.includes("%command%")) {
-    // Put a bare %command% back where the wrapper was, so surrounding
-    // wrappers/env vars keep working.
-    cur = normalize(cur.replace(cmd, "%command%"));
-    // A lone or leading %command% left behind by the removal is redundant:
-    // plain arguments after it behave the same without it.
-    if (cur === "%command%") return "";
-    if (cur.startsWith("%command% ")) return cur.slice("%command% ".length);
-    return cur;
-  }
+  // Put a bare %command% back where a wrapper command was, so surrounding
+  // wrappers/env vars keep working; plain-args commands just disappear.
+  cur = normalize(cur.replace(cmd, cmd.includes("%command%") ? "%command%" : " "));
 
-  return normalize(cur.replace(cmd, " "));
+  // A lone or leading %command% left behind by the removal is redundant:
+  // plain arguments after it behave the same without it. This also covers
+  // removing a wrapper like `~/lsfg` whose `%command%` would otherwise be
+  // orphaned in the field.
+  while (cur.startsWith("%command% ")) cur = normalize(cur.slice("%command% ".length));
+  if (cur === "%command%") return "";
+  return cur;
 }

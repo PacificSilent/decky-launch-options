@@ -13,15 +13,18 @@ sin pisar lo que el usuario ya tenía configurado.
   - `GAMEMODE=1 %command%` → `GAMEMODE=1 ~/lsfg %command%` (el wrapper queda pegado al juego)
   - `-fullscreen` (argumentos sueltos) → `~/lsfg %command% -fullscreen`
 - ✅ Quitar el comando **restaura** las opciones anteriores.
+- ✅ Quitar el comando limpia también un `%command%` que quedaría huérfano.
 - ✅ Comando editable y persistente (por si quieres inyectar otra cosa: `mangohud %command%`, etc.).
-- ✅ Buscador para filtrar tu biblioteca desde el menú de acceso rápido (QAM).
+- ✅ Selector visual en un modal: cards con la portada del juego, buscador y toggle con el botón A.
+- ✅ Interfaz en inglés (por defecto) o español, con toggle en Ajustes.
 
 ## Uso
 
 1. Abre el menú de acceso rápido (botón `...`) y entra al plugin **Launch Options**.
 2. Ajusta el comando si hace falta (por defecto `~/lsfg %command%`).
-3. Busca el juego y activa el toggle: el comando se añade a sus opciones de lanzamiento.
-   Desactívalo para quitarlo y recuperar las opciones anteriores.
+3. Pulsa **Select games...** para abrir el selector: busca el juego y pulsa A sobre su card
+   para añadir el comando a sus opciones de lanzamiento. Púlsala de nuevo para quitarlo y
+   recuperar las opciones anteriores.
 
 ## Instalación
 

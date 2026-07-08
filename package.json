@@ -1,6 +1,6 @@
 {
   "name": "decky-launch-options",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Decky plugin to inject launch options (e.g. ~/lsfg %command%) into Steam and non-Steam apps",
   "type": "module",
   "scripts": {
